@@ -1,0 +1,19 @@
+{
+  "name": "stock-chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "hbs": "^4.1.0",
+    "mongoose": "^5.9.5",
+    "socket.io": "^2.3.0"
+  }
+}
