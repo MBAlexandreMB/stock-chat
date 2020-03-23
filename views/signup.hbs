@@ -1,0 +1,19 @@
+<link rel="stylesheet" href="../stylesheets/auth.css">
+
+<form action="/auth/signup" method="POST" class="screen-center">
+  <h3>Register to enter chat!</h3>
+  <div>
+    <label for="username">Username:</label>
+    <input type="text" name="username" />
+    {{!-- <input type="text" name="username" required /> --}}
+  </div>
+  <div>
+    <label for="password">Password:</label>
+    <input type="password" name="password" required />
+  </div>
+  {{#if message}}
+    <p class="error-text">{{message}}</p>
+  {{/if}}
+  <input type="submit" value="Register">
+  <p>Already registered? <a href="/auth/login">Login</a></p>
+</form>

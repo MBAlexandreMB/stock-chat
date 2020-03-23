@@ -1,0 +1,20 @@
+{{#if user}}
+  <a href="/auth/logout">Logout</a>
+  <div id="messages-container">
+  </div>
+  <form>
+    <input value="{{user}}" id="username" hidden/>
+    <input type="text" name="message" id="message-input">
+    <button type="button" id="message-btn">Send</button>
+  </form>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../scripts/HTMLHandler.js"></script>
+  <script src="../scripts/socket.js"></script>
+  <script src="../scripts/script.js"></script>
+{{else}}
+  <div class="screen-center">
+    <p>You need to be logged in to use the chat!</p>
+    <a href="/auth/login">Login</a>
+  </div>
+{{/if}}
