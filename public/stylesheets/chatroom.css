@@ -1,0 +1,59 @@
+#container {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  
+  padding: 20px;
+}
+
+a {
+  align-self: flex-end;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+#messages-container {
+  width: 50vw;
+  height: 65vh;
+  overflow: auto;
+  margin-bottom: 15px;
+  padding: 0 10px;
+
+  border: 1px solid black;
+}
+
+.message-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+p {
+  width: fit-content;
+  margin: 5px 0;
+}
+
+form {
+  display: flex;
+  align-items: center;
+}
+
+input {
+  width: 40vw;
+  height: 32px;
+  margin-right: 20px;
+  border: 1px solid slateblue;
+  border-radius: 3px;
+  outline: none;
+
+  padding: 0px 10px;
+}
+
+#message-btn {
+  padding: 10px 25px;
+  border-radius: 5px;
+  background-color: slateblue;
+  color: white;
+  cursor: pointer;
+}

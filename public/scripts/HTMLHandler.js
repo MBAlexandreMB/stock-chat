@@ -6,10 +6,19 @@ class ChatHandler {
     this.container = container;
   }
 
-  showMessage = (message) => {
-    const p = document.createElement('p');
-    p.innerHTML = message;
-    this.container.appendChild(p); 
+  showMessage = (user, message, date) => {
+    const div = document.createElement('div');
+    div.classList.add('message-item');
+    const msgParagraph = document.createElement('p');
+    msgParagraph.innerHTML = `<b>${user}:</b> ${message}`;
+    div.appendChild(msgParagraph);
+    
+    if (date) {
+      const dateParagraph = document.createElement('p');
+      dateParagraph.innerHTML = date;
+      div.appendChild(dateParagraph);
+    }
+    this.container.appendChild(div);
   }
 
   messageSubmited() {

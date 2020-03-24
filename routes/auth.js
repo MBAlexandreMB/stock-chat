@@ -26,6 +26,7 @@ router.post('/signup', (req, res) => {
       password: hash 
     })
     .then(newUser => {
+      // req.app.set('user', newUser);
       res.redirect(307, '/chatroom');
     })
     .catch(e => {

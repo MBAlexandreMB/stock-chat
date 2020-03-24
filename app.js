@@ -58,12 +58,38 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
   const room = 'r1'
   socket.join(room);
-  io.to(room).emit('messageFromServer', { text: `Connection stablished to room ${room}` });
+  socket.on('username', (username) => {
+    socket.to(room).emit('messageFromServer', { 
+      user: 'SYSTEM',
+      text: `${username} just entered in the room`,
+      date: getDate()
+    });
+  });
 
-  socket.on('clientMessage', (data) => {
-    io.to(room).emit('messageFromServer', { text: data.message });
+  socket.on('clientMessage', (data) => {    
+    io.to(room).emit('messageFromServer', { 
+      user: data.username,
+      text: data.message,
+      date: getDate()
+    });
+  });
+  
+  socket.on('botMessage', (data) => {
+    io.to(room).emit('messageFromServer', {
+      user: 'BOT',
+      text: data.message,
+      date: getDate()
+    });
   });
 });
+
+const getDate = () => {
+  const date = new Date(Date.now());
+  return `
+  ${date.toLocaleDateString()} - 
+  ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}
+  `;
+}
 
 app.use('/auth', require('./routes/auth'));
 app.use('/', require('./routes/main'));

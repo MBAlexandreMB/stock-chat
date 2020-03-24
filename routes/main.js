@@ -8,10 +8,14 @@ router.get('/', (req, res) => {
 router.get('/chatroom', 
 (req, res, next) => { ensureLoggedIn(req, res, next) } ,(req, res) => {
   if (req.user) {
-    res.render('chatroom', { user: req.user });
+    res.render('chatroom', { user: req.user.username });
   } else {
     res.render('chatroom');
   }
+});
+
+router.post('/chatroom', (req, res, next) => {
+  res.render('chatroom', { user: req.body.username });
 });
 
 router.get('/auth/signup', (req, res, next) => { ensureLoggedOut(req, res, next) }, (req, res) => {

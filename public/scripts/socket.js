@@ -8,19 +8,17 @@ class Socket {
   }
 
   setSocketListeners() {
-    this.socket.on('logged', () => {
+    this.socket.on('connect', () => {
       this.socket.emit('username', this.username);
     });
 
     this.socket.on('messageFromServer', (data) => {
-      console.log(data);
-      this.HTMLHandler.showMessage(data.text);
+      this.HTMLHandler.showMessage(data.user, data.text, data.date);
     });
   }
 
   onMessageSubmit() {
-    this.socket.emit('clientMessage', { message: this.HTMLHandler.inputValue });
+    this.socket.emit('clientMessage', { username: this.username, message: this.HTMLHandler.inputValue });
     this.HTMLHandler.messageSubmited();
   }
 }
-
