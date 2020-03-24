@@ -1,4 +1,5 @@
 const Message = require('../models/message');
+const Room = require('../models/room');
 
 const ensureLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -6,7 +7,7 @@ const ensureLoggedIn = (req, res, next) => {
   } else {
     res.redirect('/auth/login');
   }
-}
+};
 
 const ensureLoggedOut = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -14,14 +15,14 @@ const ensureLoggedOut = (req, res, next) => {
   } else {
     next(null);
   }
-}
+};
 
-const getLastMessages = (room) => {
+const getLastMessages = (room, number) => {
   return new Promise((resolve, reject) => {
     Message.countDocuments()
     .then(count => {
-      if (count > 50) {
-        Message.find({ room }).sort({ postDate: 1}).skip(count - 50)
+      if (count > number) {
+        Message.find({ room }).sort({ postDate: 1}).skip(count - number)
         .then(result => {
           resolve(result);
         })
@@ -49,8 +50,37 @@ const saveMessage = (message, author, room, postDate, shownDate) => {
       room,
       postDate,
       shownDate
-    });
+    })
   }
 };
 
-module.exports = { ensureLoggedIn, ensureLoggedOut, getLastMessages, saveMessage };
+const saveNewRoom = (name) => {
+  const restrictedNames = ['MAIN'];
+  return new Promise((resolve, reject) => {
+    if (restrictedNames.includes(name.toUpperCase())) {
+      reject(`"${name}" is a restricted room name!`);
+      return
+    }
+
+    Room.find({ name })
+    .then(room => {
+      if (room.length > 0) {
+        reject(`Room ${name} already exists!`);
+        return;
+      }
+
+      Room.create({ name })
+      .then(newRoom => resolve(newRoom))
+      .catch(e => reject(e));
+    })
+    .catch(e => reject(e));
+  });
+};
+
+module.exports = {
+  ensureLoggedIn,
+  ensureLoggedOut,
+  getLastMessages,
+  saveMessage,
+  saveNewRoom,
+};

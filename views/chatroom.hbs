@@ -2,23 +2,40 @@
 {{#if user}}
 <div id="container">
   <a href="/auth/logout">Logout</a>
-  <h1>{{room}}</h1>
-  <div id="messages-container">
-  </div>
-  <div id="checkbox-container">
-    <label for="scroll">Scroll with message: </label>
-    <input type="checkbox" name="scroll" id="scroll-checkbox" checked="true" />
-  </div>
-  <form>
-    <input value="{{user}}" id="username" hidden/>
-    <input type="text" name="message" id="message-input">
-    <p id="message-btn">Send</p>
-  </form>
+  <div id="info-container">
+    <div id="rooms-container">
+      <h3>Rooms:</h3>
+      <ul id="rooms-container-ul">
+        <li onclick="socket.onChangeRoom('Main')">Main</li>
+        {{#each rooms}}
+          <li onclick="socket.onChangeRoom('{{this.name}}')">{{this.name}}</li>
+        {{/each}}
+      </ul>
+      <form>
+        <input type="text" name="newRoom" id="newroom-input" />
+        <p class="purple-btn" id="newroom-btn">New</p>
+      </form>
+    </div>
+    <div>
+      <h1 id="current-room-name">{{currentRoom}}</h1>
+      <div id="messages-container">
+      </div>
+      <div id="checkbox-container">
+        <label for="scroll">Scroll with message: </label>
+        <input type="checkbox" name="scroll" id="scroll-checkbox" checked="true" />
+      </div>
+      <form>
+        <input value="{{user}}" id="username" hidden/>
+        <input type="text" name="message" id="message-input">
+        <p class="purple-btn" id="message-btn">Send</p>
+      </form>
+    </div>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="../scripts/HTMLHandler.js"></script>
-  <script src="../scripts/socket.js"></script>
-  <script src="../scripts/script.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="../scripts/HTMLHandler.js"></script>
+    <script src="../scripts/socket.js"></script>
+    <script src="../scripts/script.js"></script>
+  </div>
 </div>
 {{else}}
   <div class="screen-center">

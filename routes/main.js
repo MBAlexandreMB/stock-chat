@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { ensureLoggedIn, ensureLoggedOut } = require('../config/utils');
+const Room = require('../models/room');
 
 router.get('/', (req, res) => {
   res.redirect('/auth/signup');
@@ -7,11 +8,16 @@ router.get('/', (req, res) => {
 
 router.get('/chatroom', 
 (req, res, next) => { ensureLoggedIn(req, res, next) } ,(req, res) => {
-  if (req.user) {
-    res.render('chatroom', { user: req.user.username });
-  } else {
-    res.render('chatroom');
-  }
+    Room.find()
+    .then(rooms => {
+      if (req.user) {
+        res.render('chatroom', { user: req.user.username, rooms, currentRoom: 'Main' });
+      } else {
+        res.render('chatroom');
+      }
+    })
+    .catch(e => console.log(e));
+
 });
 
 router.post('/chatroom', (req, res, next) => {

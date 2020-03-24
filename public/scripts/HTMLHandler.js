@@ -1,10 +1,11 @@
-class ChatHandler {
-  constructor (input, submitButton, container) {
-    this.input = input;
-    this.submitButton = submitButton;
+class HTMLHandler {
+  constructor (newRoomInput, messageInput, messageContainer, roomContainer) {
+    this.messageInput = messageInput;
+    this.newRoomInput = newRoomInput;
     this.shouldScroll = true;
 
-    this.container = container;
+    this.messageContainer = messageContainer;
+    this.roomContainer = roomContainer;
   }
   
   showMessage = (user, message, date) => {
@@ -26,7 +27,7 @@ class ChatHandler {
     }
 
     // append the div to the container
-    this.container.appendChild(div);
+    this.messageContainer.appendChild(div);
 
     // scroll the screen down
     if (this.shouldScroll) {
@@ -37,25 +38,54 @@ class ChatHandler {
   checkForMessagesToRemove() {
     const messageList = document.getElementsByClassName('message-item');
     if (messageList.length >= 50) {
-      this.container.removeChild(messageList[0]);
+      this.messageContainer.removeChild(messageList[0]);
     }
   }
 
   messageSubmited() {
-    this.inputValue = '';
-    this.input.focus();
+    this.messageInputValue = '';
+    this.messageInput.focus();
+  }
+
+  newRoomSubmited() {
+    this.newRoomInputValue = '';
+    this.newRoomInput.focus();
   }
 
   clearMessages() {
-    this.container.innerHTML = '';
-  }
-  
-  get inputValue() {
-    return this.input.value;
+    this.messageContainer.innerHTML = '';
   }
 
-  set inputValue(value) {
-    this.input.value = value;
+  showRoom(roomName, onChangeRoom) {
+    const li = document.createElement('li');
+    li.innerHTML = roomName;
+    li.onclick = onChangeRoom(roomName);
+
+    this.roomContainer.appendChild(li);
+  }
+
+  showErrorRoom(error) {
+    alert(error);
+  }
+
+  roomChanged(roomName) {
+    document.getElementById('current-room-name').innerHTML = roomName;
+  }
+
+  get newRoomInputValue() {
+    return this.newRoomInput.value;
+  }
+
+  set newRoomInputValue(value) {
+    this.newRoomInput.value = value;
+  }
+
+  get messageInputValue() {
+    return this.messageInput.value;
+  }
+
+  set messageInputValue(value) {
+    this.messageInput.value = value;
   }
 
   set scrollWithMessages(value) {

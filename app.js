@@ -12,7 +12,11 @@ const app          = express();
 const http         = require('http');
 const server       = http.createServer(app);
 const io           = require('socket.io')(server);
-const { getLastMessages, saveMessage } = require('./config/utils');
+const { 
+  getLastMessages, 
+  saveMessage, 
+  saveNewRoom,
+}                  = require('./config/utils');
 
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }).
@@ -58,29 +62,59 @@ app.use((req, res, next) => {
 });
 
 io.on('connection', (socket) => {
-  const room = 'r1';
-  socket.join(room);
-  getLastMessages(room)
+  let currentRoom = 'Main';
+  // upon connection, joins user in the main room
+  socket.join('Main');
+  // get last X messages of the room and sent it to the new user in the room
+  getLastMessages(currentRoom, 50)
   .then(lastMessages => {
     if (lastMessages) {
       socket.emit('recordedMessages', lastMessages);
     }
   });
 
+  // upon identification, warns the other users about his entry on the room
   socket.on('username', (username) => {
-    socket.to(room).emit('messageFromServer', { 
+    socket.to(currentRoom).emit('messageFromServer', { 
       user: 'SYSTEM',
       text: `${username} just entered in the room`,
       date: getDatePattern(new Date(Date.now()))
     });
   });
 
+  // when a user send a message, send the message back to all members in the room
   socket.on('clientMessage', (data) => {
-    messageToRoom(room, data.message, data.username);
+    messageToRoom(currentRoom, data.message, data.username);
   });
   
+  // when a bot send a message, send the message back to all members in the room
   socket.on('botMessage', (data) => {
-    messageToRoom(room, data.message, 'BOT');
+    messageToRoom(currentRoom, data.message, 'BOT');
+  });
+
+  // when a new room is created, the room is saved in the database
+  socket.on('createNewRoom', (data) => {
+    saveNewRoom(data.roomName)
+    .then(newRoom => {
+      io.emit('newRoomFromServer', { room: newRoom.name });
+    })
+    .catch(e => {
+      socket.emit('roomAlreadyExists', { message: e });
+    });
+  });
+
+  // if a socket asks to change room, removes it from current room and join him on the new one
+  socket.on('changeRoom', (data) => {
+    socket.leaveAll();
+    socket.join(data.roomName);
+    getLastMessages(data.roomName, 50)
+    .then(lastMessages => {
+      if (lastMessages) {
+        socket.emit('recordedMessages', lastMessages);
+      }
+    });
+
+    currentRoom = data.roomName;
   });
 });
 

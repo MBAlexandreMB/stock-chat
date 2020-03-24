@@ -22,10 +22,31 @@ class Socket {
     this.socket.on('messageFromServer', (data) => {
       this.HTMLHandler.showMessage(data.user, data.text, data.date);
     });
+
+    this.socket.on('newRoomFromServer', (data) => {
+      this.HTMLHandler.showRoom(data.room, this.onChangeRoom);
+    });
+    
+    this.socket.on('roomAlreadyExists', (data) => {
+      this.HTMLHandler.showErrorRoom(data.message);
+    });
   }
 
   onMessageSubmit() {
-    this.socket.emit('clientMessage', { username: this.username, message: this.HTMLHandler.inputValue });
+    this.socket.emit('clientMessage', { 
+      username: this.username, 
+      message: this.HTMLHandler.messageInputValue,
+    });
     this.HTMLHandler.messageSubmited();
+  }
+
+  onAddNewRoom() {
+    this.socket.emit('createNewRoom', { roomName: this.HTMLHandler.newRoomInputValue });
+    this.HTMLHandler.newRoomSubmited();
+  }
+
+  onChangeRoom(roomName) {
+    this.socket.emit('changeRoom', { roomName });
+    this.HTMLHandler.roomChanged(roomName);
   }
 }

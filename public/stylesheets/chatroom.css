@@ -2,12 +2,46 @@
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
-  
-  padding: 20px;
 }
 
 a {
   align-self: flex-end;
+  padding: 20px;
+}
+
+#info-container {
+  width: 100vw;
+  max-width: 100%;
+
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+#rooms-container {
+  width: 25%;
+  border: 1px solid black;
+  padding: 10px;
+  height: 84vh;
+
+  margin-right: 40px;
+}
+
+h3 {
+  margin: 0 0 20px;
+}
+
+ul {
+  min-height: 78%;
+  max-height: 78%;
+  overflow: auto;
+  list-style: none;
+}
+
+li {
+  margin-bottom: 5px;
+  text-decoration: underline;
+  cursor: pointer;
+  width: fit-content;
 }
 
 h1 {
@@ -56,7 +90,7 @@ input[type="text"] {
   padding: 0px 10px;
 }
 
-#message-btn {
+.purple-btn {
   padding: 10px 25px;
   border-radius: 5px;
   background-color: slateblue;

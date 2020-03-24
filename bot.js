@@ -10,16 +10,36 @@ const axios        = require('axios');
   });
 
   socket.on('messageFromServer', (data) => {
-    if (data.text.trim().substr(0, 7) === '/stock=') {
+    if (data.text.trim().toLowerCase().substr(0, 7) === '/stock=') {
       const stock = data.text.split('=')[1].toUpperCase();
       axios.get(`https://stooq.com/q/l/?s=${stock}&f=sd2t2ohlcv&h&e=csv`)
       .then(result => {
         let closeValue = result.data.split(stock)[1].split(',');
         closeValue = closeValue[closeValue.length - 2];
-        socket.emit('botMessage', { message: `${stock} quote is $${closeValue} per share.`});
+        
+        const error = checkForErrors(stock, closeValue);
+        if (!error) {
+          socket.emit('botMessage', { message: `${stock} quote is $${closeValue} per share.`});
+        } else {
+          socket.emit('botMessage', { message: error });
+        }
       })
       .catch(e => console.log(e));
     }
   });
+
+  const checkForErrors = (stock, closeValue) => {
+    let response = '';
+    
+    if (closeValue === 'N/D') {
+      response += `No data for stock ${stock}.`;
+    }
+
+    if (stock[0] === '"' || stock[0] === "'") {
+      response += ` Try /stock=${stock.replace(/[\"\']/g, '')} (without quotes).`;
+    }
+
+    return response;
+  }
 
 server.listen(4000);
