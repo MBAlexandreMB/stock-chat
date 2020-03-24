@@ -6,8 +6,11 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "bot": "nodemon bot.js", 
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "bot": "nodemon bot.js",
+    "test": "jest --detectOpenHandles"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +28,7 @@
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
+    "jest": "^25.1.0",
     "morgan": "^1.10.0"
   }
 }
