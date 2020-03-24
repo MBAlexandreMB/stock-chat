@@ -24,7 +24,7 @@ class Socket {
     });
 
     this.socket.on('newRoomFromServer', (data) => {
-      this.HTMLHandler.showRoom(data.room, this.onChangeRoom);
+      this.HTMLHandler.showRoom(data.room, this.onChangeRoom.bind(this));
     });
     
     this.socket.on('roomAlreadyExists', (data) => {

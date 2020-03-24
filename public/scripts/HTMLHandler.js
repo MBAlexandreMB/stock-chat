@@ -59,7 +59,7 @@ class HTMLHandler {
   showRoom(roomName, onChangeRoom) {
     const li = document.createElement('li');
     li.innerHTML = roomName;
-    li.onclick = onChangeRoom(roomName);
+    li.onclick = () => { onChangeRoom(roomName) };
 
     this.roomContainer.appendChild(li);
   }

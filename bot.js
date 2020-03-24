@@ -31,6 +31,10 @@ const axios        = require('axios');
   const checkForErrors = (stock, closeValue) => {
     let response = '';
     
+    if (stock === '' || stock === undefined) {
+      return 'Please, type a stock code after "/stock="';
+    }
+
     if (closeValue === 'N/D') {
       response += `No data for stock ${stock}.`;
     }

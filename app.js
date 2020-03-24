@@ -94,13 +94,15 @@ io.on('connection', (socket) => {
 
   // when a new room is created, the room is saved in the database
   socket.on('createNewRoom', (data) => {
-    saveNewRoom(data.roomName)
-    .then(newRoom => {
-      io.emit('newRoomFromServer', { room: newRoom.name });
-    })
-    .catch(e => {
-      socket.emit('roomAlreadyExists', { message: e });
-    });
+    if (data.roomName) {
+      saveNewRoom(data.roomName)
+      .then(newRoom => {
+        io.emit('newRoomFromServer', { room: newRoom.name });
+      })
+      .catch(e => {
+        socket.emit('roomAlreadyExists', { message: e });
+      });
+    }
   });
 
   // if a socket asks to change room, removes it from current room and join him on the new one
@@ -119,14 +121,16 @@ io.on('connection', (socket) => {
 });
 
 const messageToRoom = (room, message, user) => {
-  const date = new Date(Date.now());
-  const shownDate = getDatePattern(date);
-  saveMessage(message, user, room, date, shownDate);
-  io.to(room).emit('messageFromServer', {
-    user,
-    text: message,
-    date: shownDate
-  });
+  if (message) {
+    const date = new Date(Date.now());
+    const shownDate = getDatePattern(date);
+    saveMessage(message, user, room, date, shownDate);
+    io.to(room).emit('messageFromServer', {
+      user,
+      text: message,
+      date: shownDate
+    });
+  }
 }
 
 const getDatePattern = (date) => {
