@@ -12,6 +12,13 @@ class Socket {
       this.socket.emit('username', this.username);
     });
 
+    this.socket.on('recordedMessages', (recordedMessages) => {
+      this.HTMLHandler.clearMessages();
+      recordedMessages.forEach(data => {
+        this.HTMLHandler.showMessage(data.author, data.message, data.shownDate);
+      });
+    });
+
     this.socket.on('messageFromServer', (data) => {
       this.HTMLHandler.showMessage(data.user, data.text, data.date);
     });

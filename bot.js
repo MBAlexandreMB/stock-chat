@@ -6,11 +6,11 @@ const axios        = require('axios');
 
   const socket = io('http://localhost:3000');
   socket.on('connect', () => {
-    socket.emit('botMessage', { message: 'I\'m in!' });
+    socket.emit('username', 'BOT');
   });
 
   socket.on('messageFromServer', (data) => {
-    if (data.text.substr(0, 7) === '/stock=') {
+    if (data.text.trim().substr(0, 7) === '/stock=') {
       const stock = data.text.split('=')[1].toUpperCase();
       axios.get(`https://stooq.com/q/l/?s=${stock}&f=sd2t2ohlcv&h&e=csv`)
       .then(result => {

@@ -24,6 +24,12 @@ h1 {
   border: 1px solid black;
 }
 
+#checkbox-container {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+}
+
 .message-item {
   display: flex;
   justify-content: space-between;
@@ -39,7 +45,7 @@ form {
   align-items: center;
 }
 
-input {
+input[type="text"] {
   width: 40vw;
   height: 32px;
   margin-right: 20px;

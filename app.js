@@ -12,6 +12,8 @@ const app          = express();
 const http         = require('http');
 const server       = http.createServer(app);
 const io           = require('socket.io')(server);
+const { getLastMessages, saveMessage } = require('./config/utils');
+
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }).
 then((result) => {
@@ -56,35 +58,44 @@ app.use((req, res, next) => {
 });
 
 io.on('connection', (socket) => {
-  const room = 'r1'
+  const room = 'r1';
   socket.join(room);
+  getLastMessages(room)
+  .then(lastMessages => {
+    if (lastMessages) {
+      socket.emit('recordedMessages', lastMessages);
+    }
+  });
+
   socket.on('username', (username) => {
     socket.to(room).emit('messageFromServer', { 
       user: 'SYSTEM',
       text: `${username} just entered in the room`,
-      date: getDate()
+      date: getDatePattern(new Date(Date.now()))
     });
   });
 
-  socket.on('clientMessage', (data) => {    
-    io.to(room).emit('messageFromServer', { 
-      user: data.username,
-      text: data.message,
-      date: getDate()
-    });
+  socket.on('clientMessage', (data) => {
+    messageToRoom(room, data.message, data.username);
   });
   
   socket.on('botMessage', (data) => {
-    io.to(room).emit('messageFromServer', {
-      user: 'BOT',
-      text: data.message,
-      date: getDate()
-    });
+    messageToRoom(room, data.message, 'BOT');
   });
 });
 
-const getDate = () => {
+const messageToRoom = (room, message, user) => {
   const date = new Date(Date.now());
+  const shownDate = getDatePattern(date);
+  saveMessage(message, user, room, date, shownDate);
+  io.to(room).emit('messageFromServer', {
+    user,
+    text: message,
+    date: shownDate
+  });
+}
+
+const getDatePattern = (date) => {
   return `
   ${date.toLocaleDateString()} - 
   ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}
