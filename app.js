@@ -73,6 +73,11 @@ io.on('connection', (socket) => {
     }
   });
 
+  // when a bot comes in, he'll subscribe to every room available with at least 1 user
+  socket.on('getBotRooms', () => {
+    setBotRooms(socket);
+  });
+
   // upon identification, warns the other users about his entry on the room
   socket.on('username', (username) => {
     socket.to(currentRoom).emit('messageFromServer', { 
@@ -89,7 +94,7 @@ io.on('connection', (socket) => {
   
   // when a bot send a message, send the message back to all members in the room
   socket.on('botMessage', (data) => {
-    messageToRoom(currentRoom, data.message, 'BOT');
+    messageToRoom(data.room, data.message, 'BOT');
   });
 
   // when a new room is created, the room is saved in the database
@@ -107,7 +112,7 @@ io.on('connection', (socket) => {
 
   // if a socket asks to change room, removes it from current room and join him on the new one
   socket.on('changeRoom', (data) => {
-    socket.leaveAll();
+    socket.leave(getNonPersonalRooms(socket));
     socket.join(data.roomName);
     getLastMessages(data.roomName, 50)
     .then(lastMessages => {
@@ -116,6 +121,10 @@ io.on('connection', (socket) => {
       }
     });
 
+    // wait for the room change to take effect
+    setTimeout(() => {
+      io.to('bot').emit('getNewRooms');
+    }, 1000);
     currentRoom = data.roomName;
   });
 });
@@ -128,16 +137,35 @@ const messageToRoom = (room, message, user) => {
     io.to(room).emit('messageFromServer', {
       user,
       text: message,
-      date: shownDate
+      date: shownDate,
+      room
     });
   }
 }
+
+const setBotRooms = (bot) => {
+  bot.leaveAll();
+  bot.join('bot');
+  for (socket in io.sockets.sockets) {
+    if (bot.id !== socket) {
+      bot.join(getNonPersonalRooms(io.sockets.sockets[socket]));
+    }
+  }
+};
 
 const getDatePattern = (date) => {
   return `
   ${date.toLocaleDateString()} - 
   ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}
   `;
+}
+
+const getNonPersonalRooms = (socket) => {
+  const rooms = Object.keys(socket.rooms);
+  const ownRoomIndex = rooms.indexOf(socket.id);
+  rooms.splice(ownRoomIndex, 1);
+
+  return rooms;
 }
 
 app.use('/auth', require('./routes/auth'));

@@ -1,4 +1,4 @@
-const app          = require('express')();
+// const app          = require('express')();
 const http         = require('http');
 const server       = http.createServer();
 const io           = require('socket.io-client');
@@ -7,6 +7,11 @@ const axios        = require('axios');
   const socket = io('http://localhost:3000');
   socket.on('connect', () => {
     socket.emit('username', 'BOT');
+    socket.emit('getBotRooms');
+  });
+
+  socket.on('getNewRooms', () => {
+    socket.emit('getBotRooms');
   });
 
   socket.on('messageFromServer', (data) => {
@@ -19,9 +24,9 @@ const axios        = require('axios');
         
         const error = checkForErrors(stock, closeValue);
         if (!error) {
-          socket.emit('botMessage', { message: `${stock} quote is $${closeValue} per share.`});
+          socket.emit('botMessage', { room: data.room, message: `${stock} quote is $${closeValue} per share.`});
         } else {
-          socket.emit('botMessage', { message: error });
+          socket.emit('botMessage', { room: data.room, message: error });
         }
       })
       .catch(e => console.log(e));
