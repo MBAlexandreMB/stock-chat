@@ -9,12 +9,12 @@ module.exports = class serverSocket {
 
   setListeners() {
     this.io.on('connection', (socket) => {    
-      let currentRoom = 'Main';
+      socket.currentRoom = 'Main';
       // upon connection, joins user in the main room
       socket.join('Main');
       
       // get last X messages of the room and sent it to the new user in the room
-      getLastMessages(currentRoom, 50)
+      getLastMessages(socket.currentRoom, 50)
       .then(lastMessages => {
         if (lastMessages) {
           socket.emit('recordedMessages', lastMessages);
@@ -23,7 +23,7 @@ module.exports = class serverSocket {
     
       // upon identification, warns the other users about his entry on the room
       socket.on('username', (username) => {
-        socket.to(currentRoom).emit('messageFromServer', { 
+        socket.to(socket.currentRoom).emit('messageFromServer', { 
           user: 'SYSTEM',
           text: `${username} just entered in the room`,
           date: this.getDatePattern(new Date(Date.now()))
@@ -33,9 +33,9 @@ module.exports = class serverSocket {
       // when a user send a message, send the message back to all members in the room
       socket.on('clientMessage', (data) => {
         if (this.bot) {
-          this.bot.messageToBot({room: currentRoom, message: data.message});
+          this.bot.messageToBot({room: socket.currentRoom, message: data.message});
         }
-        this.messageToRoom(currentRoom, data.message, data.username, true);
+        this.messageToRoom(socket.currentRoom, data.message, data.username, true);
       });
       
       // when a new room is created, the room is saved in the database
@@ -55,7 +55,7 @@ module.exports = class serverSocket {
       socket.on('changeRoom', (data) => {
         socket.leave(this.getNonPersonalRooms(socket));
         socket.join(data.roomName);
-        currentRoom = data.roomName;
+        socket.currentRoom = data.roomName;
         getLastMessages(data.roomName, 50)
         .then(lastMessages => {
           if (lastMessages) {

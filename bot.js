@@ -20,7 +20,6 @@ amqp.connect(process.env.RABBITMQ_AMPQ, function(error, connection) {
     channel.consume('messageFromServer', function(data) {
       // transform the buffer in a object
       data = JSON.parse(data.content.toString());
-
       // checks for commands 
       if (data.message.trim().toLowerCase().substr(0, 7) === '/stock=') {
         // gets the stock from command
