@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "bot": "node bot.js",
+    "dev-bot": "nodemon bot.js",
     "dev": "nodemon app.js",
-    "bot": "nodemon bot.js",
     "test": "jest --detectOpenHandles"
   },
   "jest": {
@@ -16,8 +17,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^0.5.5",
     "axios": "^0.19.2",
     "body-parser": "^1.19.0",
+    "connect-flash": "^0.1.1",
     "connect-mongo": "^3.2.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
@@ -28,7 +31,6 @@
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
-    "jest": "^25.1.0",
-    "morgan": "^1.10.0"
+    "jest": "^25.1.0"
   }
 }

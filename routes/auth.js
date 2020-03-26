@@ -10,6 +10,12 @@ router.post('/signup', (req, res) => {
   //Checks for empty usernames
   if (!username || username === '') {
     res.render('signup', { message: 'Username is required!' });
+    return;
+  }
+  
+  if (username.toUpperCase() === 'BOT') {
+    res.render('signup', { message: 'This username is already taken!' });
+    return;
   }
 
   //Checks if the username already exists 
@@ -42,11 +48,11 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/login', passport.authenticate('local', {
-  failureFlash: false,
+  successReturnToOrRedirect: '/chatroom',
+  failureRedirect: '/auth/login',
+  failureFlash: true,
   passReqToCallback: true
-}), (req, res, next) => {
-  res.redirect('/chatroom');
-});
+}));
 
 router.get('/logout', (req, res) => {
   req.logOut();

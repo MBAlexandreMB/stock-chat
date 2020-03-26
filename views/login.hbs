@@ -10,6 +10,9 @@
     <label for="password">Password:</label>
     <input type="password" name="password" required />
   </div>
+  {{#if message}}
+    <p class="error-text">{{message}}</p>
+  {{/if}}
   <input type="submit" value="Login">
 
   <p>Not registered? <a href="/auth/signup">Sign up</a></p>
