@@ -4,12 +4,10 @@ const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt');
 
 passport.serializeUser((username, cb) => {
-  console.log('serialize');
   cb(null, username);
 });
 
 passport.deserializeUser((username, cb) => {
-  console.log('deserialize');
   User.findOne({ username })
     .then((user) => {
         cb(null, user);

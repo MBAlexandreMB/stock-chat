@@ -47,12 +47,23 @@ router.post('/signup', (req, res) => {
   })
 });
 
-router.post('/login', passport.authenticate('local', {
-  successReturnToOrRedirect: '/chatroom',
-  failureRedirect: '/auth/login',
-  failureFlash: true,
-  passReqToCallback: true
-}));
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      res.render('login', { message: err });
+      return;
+    }
+    
+    if (!user) {
+      res.render('login', { message: info.message });
+      return
+    }
+
+    req.login(user, () => {
+      res.redirect('/chatroom');
+    });
+  })(req, res, next);
+});
 
 router.get('/logout', (req, res) => {
   req.logOut();

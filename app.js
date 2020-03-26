@@ -5,7 +5,6 @@ const bodyParser   = require('body-parser');
 const cookieParser = require('cookie-parser');
 const mongoose     = require('mongoose');
 const passport     = require('./config/passport');
-const flash        = require('connect-flash');
 const session      = require('express-session');
 const MongoStore   = require('connect-mongo')(session);
 const Bot          = require('./config/rabbit.mq');
@@ -30,7 +29,6 @@ then((result) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(flash());
 
 // Express View engine setup
 app.set('views', __dirname + '/views');
